@@ -1,8 +1,8 @@
-import cron from 'node-cron';
 import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import cheerio from 'cheerio';
+import schedule from 'node-schedule';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -32,23 +32,15 @@ const myTask = async () => {
   }
 };
 
-// Schedule the task to run every 1 minute
-const scheduledTask = cron.schedule('*/3 * * * *', myTask, {
-  scheduled: true,
-  timezone: 'Asia/Kolkata', // Replace 'Your_Timezone' with your desired timezone (e.g., 'America/New_York')
-});
+// Schedule the task to run every 3 minutes
+const scheduledTask = schedule.scheduleJob('*/3 * * * *', myTask);
 
-// You can stop the scheduled task if needed
-// scheduledTask.stop();
+// You can cancel the scheduled task if needed
+// scheduledTask.cancel();
 
 // Optionally, you can handle errors
 scheduledTask.on('error', (error) => {
-  console.error('Cron job error:', error);
-});
-
-// Optionally, you can handle task completion
-scheduledTask.on('end', () => {
-  console.log('Cron job has ended.');
+  console.error('Scheduled job error:', error);
 });
 
 app.get('/', (req, res) => {
